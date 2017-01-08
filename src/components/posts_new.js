@@ -1,8 +1,25 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { reduxForm } from 'redux-form';
 import { createPost } from '../actions/index';
+import { Link } from 'react-router';
 
 class PostsNew extends Component {
+  // defines an object on the PostsNew class
+  // the router will provide the context
+  // router is used to update the current path
+  static contextTypes = {
+    router: PropTypes.object
+  };
+
+  onSubmit(props){
+    this.props.createPost(props)
+      .then(() => {
+        //blog post has been created, navigate the user to the index
+        // we navigate by calling this.context.router.push with the new path to navigate to
+        this.context.router.push('/');
+    });
+  }
+
   render(){
     // const handleSubmit = this.props.handleSubmit;
     // const title = this.props.fields.title
@@ -13,7 +30,7 @@ class PostsNew extends Component {
 
     // { ...title } destructures the object; ensures that everyone of the title properties shows up inside the input
     return (
-      <form onSubmit={handleSubmit(this.props.createPost)}>
+      <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
         <h3>Create New Post</h3>
         <div className={`form-group ${title.touched && title.invalid ? 'has-danger' : ''}` }>
           <label>Title</label>
@@ -37,6 +54,7 @@ class PostsNew extends Component {
             </div>
         </div>
         <button type="submit" className="btn btn-primary">Submit</button>
+        <Link to="/" className="btn btn-danger">Cancel</Link>
       </form>
     )
   }
